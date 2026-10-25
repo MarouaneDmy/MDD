@@ -1,5 +1,4 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// prisma/schema.prisma
 
 generator client {
   provider = "prisma-client-js"
@@ -10,13 +9,70 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// TODO: Define your data models here
-// Example:
-// model User {
-//   id        Int      @id @default(autoincrement())
-//   email     String   @unique
-//   username  String   @unique
-//   password  String
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-// }
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  username      String    @unique
+  password      String
+  bio           String?
+  avatarUrl     String?
+  createdAt     DateTime  @default(now())
+  
+  articles      Article[]
+  comments      Comment[]
+  subscriptions Subscription[]
+}
+
+model Article {
+  id            String    @id @default(cuid())
+  title         String
+  content       String
+  authorId      String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  author        User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  comments      Comment[]
+  topics        ArticleTopic[]
+}
+
+model Comment {
+  id            String    @id @default(cuid())
+  content       String
+  authorId      String
+  articleId     String
+  createdAt     DateTime  @default(now())
+  
+  author        User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  article       Article   @relation(fields: [articleId], references: [id], onDelete: Cascade)
+}
+
+model Topic {
+  id            String    @id @default(cuid())
+  name          String    @unique
+  description   String?
+  
+  subscribers   Subscription[]
+  articles      ArticleTopic[]
+}
+
+model Subscription {
+  userId        String
+  topicId       String
+  createdAt     DateTime  @default(now())
+  
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topic         Topic     @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  
+  @@id([userId, topicId])
+}
+
+model ArticleTopic {
+  articleId     String
+  topicId       String
+  
+  article       Article   @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  topic         Topic     @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  
+  @@id([articleId, topicId])
+}
