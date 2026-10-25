@@ -1,5 +1,6 @@
 // prisma/seed.ts
 import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
@@ -25,14 +26,15 @@ async function main() {
     create: { name: "Web3", description: "Blockchain et décentralisation" },
   });
 
-  // 2. Création des Utilisateurs
+  const hashedPassword = await bcrypt.hash("password123", 10);
+
   const userMarouane = await prisma.user.upsert({
     where: { email: "marouane@mdd.dev" },
     update: {},
     create: {
       email: "marouane@mdd.dev",
       username: "marouane_dev",
-      password: "$2b$10$EpRnTzVlqHNP0.fUbXUwSOyuiXe/QLSUG6xNekdHgTGmrpHEfIoxm", // "password123" haché avec bcrypt
+      password: hashedPassword, // 👈 UTILISE LA VARIABLE ICI
       bio: "Développeur Full-Stack passionné par Next.js et TypeScript.",
     },
   });
@@ -43,7 +45,7 @@ async function main() {
     create: {
       email: "juana@mdd.dev",
       username: "juana_ui",
-      password: "$2b$10$EpRnTzVlqHNP0.fUbXUwSOyuiXe/QLSUG6xNekdHgTGmrpHEfIoxm", // "password123"
+      password: hashedPassword, // 👈 ET ICI
       bio: "Designer UI/UX et créatrice de MDD.",
     },
   });
