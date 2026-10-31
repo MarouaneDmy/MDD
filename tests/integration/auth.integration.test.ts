@@ -42,3 +42,43 @@ describe("Test d'Intégration : Chaîne d'Authentification", () => {
     expect(isPasswordValid).toBe(false);
   });
 });
+
+describe("Test d'Intégration : Inscription et Contraintes DB", () => {
+  // Nettoyage après le test pour ne pas polluer la DB
+  afterAll(async () => {
+    await prisma.user.deleteMany({ where: { email: "tdd_test@mdd.dev" } });
+    await prisma.$disconnect();
+  });
+
+  it("devrait créer un nouvel utilisateur et hacher son mot de passe", async () => {
+    const hashedPassword = await bcrypt.hash("password123", 10);
+
+    const newUser = await prisma.user.create({
+      data: {
+        email: "tdd_test@mdd.dev",
+        username: "tdd_user",
+        password: hashedPassword,
+      },
+    });
+
+    expect(newUser.id).toBeDefined();
+    expect(newUser.email).toBe("tdd_test@mdd.dev");
+    // On vérifie que le mot de passe en DB n'est PAS en clair
+    expect(newUser.password).not.toBe("password123");
+  });
+
+  it("devrait échouer si l'email existe déjà (Unique Constraint)", async () => {
+    const hashedPassword = await bcrypt.hash("password123", 10);
+
+    // On attend une erreur de Prisma (P2002: Unique constraint failed)
+    await expect(
+      prisma.user.create({
+        data: {
+          email: "tdd_test@mdd.dev", // Déjà créé dans le test précédent
+          username: "tdd_user_duplicate",
+          password: hashedPassword,
+        },
+      }),
+    ).rejects.toThrow();
+  });
+});
