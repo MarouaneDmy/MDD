@@ -1,12 +1,11 @@
+// app/(auth)/login/page.tsx
 "use client";
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function LoginPage() {
-  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -30,14 +29,12 @@ export default function LoginPage() {
       setError("Email ou mot de passe incorrect.");
       setIsLoading(false);
     } else {
-      // Succès : redirection vers le fil d'actualité (ou la page d'accueil)
-      router.push("/");
-      router.refresh();
+      window.location.href = "/feed";
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+    <div className="flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-card p-8 rounded-xl shadow-lg border border-border">
         <h1 className="text-2xl font-bold text-center mb-6 text-foreground">
           Connexion à MDD

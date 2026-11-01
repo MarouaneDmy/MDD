@@ -7,7 +7,9 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("🌱 Début du seeding de la base de données...");
 
-  // 1. Création des Thèmes (Topics)
+  // ==========================================
+  // 1. CRÉATION DE TOUS LES THÈMES (Indépendants)
+  // ==========================================
   const topicJS = await prisma.topic.upsert({
     where: { name: "JavaScript" },
     update: {},
@@ -26,6 +28,47 @@ async function main() {
     create: { name: "Web3", description: "Blockchain et décentralisation" },
   });
 
+  const topicTS = await prisma.topic.upsert({
+    where: { name: "TypeScript" },
+    update: {},
+    create: {
+      name: "TypeScript",
+      description:
+        "Le sur-ensemble de JavaScript qui ajoute du typage statique",
+    },
+  });
+
+  const topicPython = await prisma.topic.upsert({
+    where: { name: "Python" },
+    update: {},
+    create: {
+      name: "Python",
+      description: "Langage de programmation polyvalent et populaire",
+    },
+  });
+
+  const topicDevOps = await prisma.topic.upsert({
+    where: { name: "DevOps" },
+    update: {},
+    create: {
+      name: "DevOps",
+      description:
+        "Pratiques et outils pour l'automatisation et le déploiement",
+    },
+  });
+
+  const topicAI = await prisma.topic.upsert({
+    where: { name: "Intelligence Artificielle" },
+    update: {},
+    create: {
+      name: "Intelligence Artificielle",
+      description: "Machine Learning, Deep Learning et IA générative",
+    },
+  });
+
+  // ==========================================
+  // 2. CRÉATION DES UTILISATEURS
+  // ==========================================
   const hashedPassword = await bcrypt.hash("password123", 10);
 
   const userMarouane = await prisma.user.upsert({
@@ -34,7 +77,7 @@ async function main() {
     create: {
       email: "marouane@mdd.dev",
       username: "marouane_dev",
-      password: hashedPassword, // 👈 UTILISE LA VARIABLE ICI
+      password: hashedPassword,
       bio: "Développeur Full-Stack passionné par Next.js et TypeScript.",
     },
   });
@@ -45,12 +88,24 @@ async function main() {
     create: {
       email: "juana@mdd.dev",
       username: "juana_ui",
-      password: hashedPassword, // 👈 ET ICI
+      password: hashedPassword,
       bio: "Designer UI/UX et créatrice de MDD.",
     },
   });
 
-  // 3. Création des Articles
+  // ==========================================
+  // 3. CRÉATION DES ARTICLES (Avec nettoyage préalable)
+  // ==========================================
+
+  // 👇 On supprime d'abord les anciens articles de ces utilisateurs pour éviter les doublons
+  await prisma.article.deleteMany({
+    where: {
+      authorId: {
+        in: [userMarouane.id, userJuana.id],
+      },
+    },
+  });
+
   const article1 = await prisma.article.create({
     data: {
       title: "Pourquoi TypeScript est incontournable en 2024",
@@ -58,7 +113,7 @@ async function main() {
         "TypeScript ajoute un typage statique à JavaScript, ce qui réduit les bugs et améliore la maintenabilité...",
       authorId: userMarouane.id,
       topics: {
-        create: [{ topicId: topicJS.id }, { topicId: topicReact.id }],
+        create: [{ topicId: topicJS.id }, { topicId: topicTS.id }],
       },
     },
   });
@@ -75,7 +130,19 @@ async function main() {
     },
   });
 
-  // 4. Création des Commentaires
+  // ==========================================
+  // 4. CRÉATION DES COMMENTAIRES (Avec nettoyage préalable)
+  // ==========================================
+
+  // 👇 On supprime d'abord les anciens commentaires de ces utilisateurs
+  await prisma.comment.deleteMany({
+    where: {
+      authorId: {
+        in: [userMarouane.id, userJuana.id],
+      },
+    },
+  });
+
   await prisma.comment.create({
     data: {
       content:
@@ -93,11 +160,23 @@ async function main() {
     },
   });
 
-  // 5. Création des Abonnements (Marouane s'abonne à React et Web3)
+  // ==========================================
+  // 5. CRÉATION DES ABONNEMENTS (Dépendent des Users et Topics)
+  // ==========================================
+
+  await prisma.subscription.deleteMany({
+    where: {
+      userId: {
+        in: [userMarouane.id, userJuana.id],
+      },
+    },
+  });
+
   await prisma.subscription.createMany({
     data: [
       { userId: userMarouane.id, topicId: topicReact.id },
       { userId: userMarouane.id, topicId: topicWeb3.id },
+      { userId: userMarouane.id, topicId: topicTS.id },
       { userId: userJuana.id, topicId: topicJS.id },
     ],
   });
