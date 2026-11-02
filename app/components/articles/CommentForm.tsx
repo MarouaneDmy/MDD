@@ -51,6 +51,7 @@ export default function CommentForm({ articleId }: CommentFormProps) {
         </div>
         <button
           type="submit"
+          aria-label="Envoyer le commentaire"
           disabled={isLoading || !content.trim()}
           className="self-end p-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >

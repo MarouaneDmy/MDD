@@ -2,10 +2,23 @@ import { PrismaClient } from "@prisma/client";
 import Link from "next/link";
 import { PlusCircle } from "lucide-react";
 import ArticleCard from "@/app/components/articles/ArticleCard";
+import SortSelect from "@/app/components/feed/SortSelect";
 
 const prisma = new PrismaClient();
 
-export default async function FeedPage() {
+interface FeedPageProps {
+  searchParams: Promise<{
+    sort?: string;
+  }>;
+}
+
+export default async function FeedPage({ searchParams }: FeedPageProps) {
+  const resolvedSearchParams = await searchParams;
+  const sortParam = resolvedSearchParams.sort;
+
+  // On détermine l'ordre pour Prisma
+  const orderByDirection = sortParam === "oldest" ? "asc" : "desc";
+
   const articles = await prisma.article.findMany({
     include: {
       author: {
@@ -16,7 +29,7 @@ export default async function FeedPage() {
       },
     },
     orderBy: {
-      createdAt: "desc",
+      createdAt: orderByDirection,
     },
   });
 
@@ -33,10 +46,7 @@ export default async function FeedPage() {
 
         <div className="flex items-center gap-2 text-foreground">
           <span className="font-medium">Trier par</span>
-          <select className="border border-border rounded px-3 py-2 bg-background">
-            <option value="recent">Plus récents</option>
-            <option value="oldest">Plus anciens</option>
-          </select>
+          <SortSelect />
         </div>
       </div>
 

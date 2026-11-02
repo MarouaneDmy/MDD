@@ -1,20 +1,11 @@
 "use server";
 
 import { auth } from "@/auth";
+import { commentSchema } from "@/lib/validations/comment.schema";
 import { PrismaClient } from "@prisma/client";
 import { revalidatePath } from "next/cache";
-import { z } from "zod";
 
 const prisma = new PrismaClient();
-
-// Schéma de validation pour le commentaire
-const commentSchema = z.object({
-  content: z
-    .string()
-    .min(1, "Le commentaire ne peut pas être vide")
-    .max(1000, "Le commentaire est trop long"),
-  articleId: z.string().cuid(),
-});
 
 export async function addComment(formData: FormData) {
   const session = await auth();

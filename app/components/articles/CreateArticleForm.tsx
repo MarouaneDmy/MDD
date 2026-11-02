@@ -115,7 +115,7 @@ export default function CreateArticleForm({ topics }: CreateArticleFormProps) {
             htmlFor="title"
             className="block text-sm font-medium text-foreground mb-2"
           >
-            Titre de larticle
+            {"Titre de l'article"}
           </label>
           <input
             id="title"
@@ -135,7 +135,7 @@ export default function CreateArticleForm({ topics }: CreateArticleFormProps) {
             htmlFor="content"
             className="block text-sm font-medium text-foreground mb-2"
           >
-            Contenu de larticle
+            {"Contenu de l'article"}
           </label>
           <textarea
             id="content"

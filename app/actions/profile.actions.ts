@@ -5,23 +5,9 @@ import { auth } from "@/auth";
 import { PrismaClient } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
-import { z } from "zod";
+import { profileSchema } from "@/lib/validations/profile.schema";
 
 const prisma = new PrismaClient();
-
-// Schéma de validation pour la mise à jour du profil
-const profileSchema = z.object({
-  username: z
-    .string()
-    .min(3, "Le nom d'utilisateur doit contenir au moins 3 caractères")
-    .max(50, "Le nom d'utilisateur est trop long"),
-  email: z.string().email("Adresse email invalide"),
-  password: z
-    .string()
-    .min(8, "Le mot de passe doit contenir au moins 8 caractères")
-    .optional()
-    .or(z.literal("")),
-});
 
 export async function updateProfile(formData: FormData) {
   const session = await auth();

@@ -13,18 +13,23 @@ export default function RegisterPage() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    console.log("🚀 [CLIENT] Tentative d'inscription...");
     setError(null);
     setIsLoading(true);
 
     const formData = new FormData(e.currentTarget);
     const result = await registerUser(formData);
 
+    console.log("📦 [CLIENT] Réponse du serveur:", result);
+
     if (result.success) {
-      // Redirection vers la page de login après inscription réussie
-      router.push("/login");
+      console.log("✅ [CLIENT] Succès, redirection vers /login");
+      // window.location.href force un vrai rechargement, ce qui est plus fiable après une auth
+      window.location.href = "/login";
     } else {
-      setError(result.error ?? null);
-      setIsLoading(false);
+      console.log("❌ [CLIENT] Échec de l'inscription:", result.error);
+      setError(result.error ?? "Une erreur est survenue");
+      setIsLoading(false); // C'est cette ligne qui réactive le bouton et cause le "spam" de Playwright en cas d'erreur
     }
   }
 

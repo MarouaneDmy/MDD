@@ -14,6 +14,7 @@ export async function registerUser(formData: FormData) {
   const validatedData = registerSchema.safeParse({ email, username, password });
 
   if (!validatedData.success) {
+    console.log("❌ Erreur de validation Zod:", validatedData.error.issues);
     return {
       success: false,
       error: validatedData.error.issues[0].message,
@@ -31,11 +32,14 @@ export async function registerUser(formData: FormData) {
       },
     });
 
+    console.log("✅ Utilisateur créé:", user.id);
+
     return {
       success: true,
       userId: user.id,
     };
   } catch (error: unknown) {
+    console.error("❌ Erreur Prisma:", error);
     if (
       error instanceof Error &&
       "code" in error &&
@@ -43,7 +47,7 @@ export async function registerUser(formData: FormData) {
     ) {
       return {
         success: false,
-        error: "Cet email est déjà utilisé.",
+        error: "Cet email ou ce nom d'utilisateur est déjà utilisé.",
       };
     }
 

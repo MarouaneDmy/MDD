@@ -26,6 +26,9 @@ export default function ProfileForm({
     const formData = new FormData(e.currentTarget);
     const result = await updateProfile(formData);
 
+    // 👇 AJOUTE CETTE LIGNE POUR VOIR L'ERREUR EXACTE RETOURNÉE
+    console.log("🔍 RÉSULTAT DE updateProfile:", result);
+
     if (result.success) {
       setSuccess(true);
       // Réinitialiser le champ mot de passe
