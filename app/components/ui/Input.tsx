@@ -14,7 +14,7 @@ export function Input({
   ...props
 }: InputProps) {
   return (
-    <div className="w-64 mx-auto flex flex-col">
+    <div className="mx-auto flex w-full flex-col md:w-64">
       <label htmlFor={id} className="block text-sm font-medium text-gray-900">
         {label}
       </label>

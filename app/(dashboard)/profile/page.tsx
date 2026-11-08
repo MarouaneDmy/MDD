@@ -1,8 +1,9 @@
 // app/(dashboard)/profile/page.tsx
-import { getUserProfile } from "@/app/actions/profile.actions";
 import { redirect } from "next/navigation";
+import { getUserProfile } from "@/app/actions/profile.actions";
 import ProfileForm from "@/app/components/profile/ProfileForm";
 import SubscriptionsList from "@/app/components/profile/SubscriptionsList";
+import PageContainer from "@/app/components/ui/PageContainer";
 
 export default async function ProfilePage() {
   const user = await getUserProfile();
@@ -11,30 +12,28 @@ export default async function ProfilePage() {
     redirect("/login");
   }
 
-  // 👇 Mapper les subscriptions pour ajouter un "id" virtuel
   const subscriptionsWithId = user.subscriptions.map((sub) => ({
     id: `${sub.userId}-${sub.topicId}`,
     topic: sub.topic,
   }));
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <h1 className="text-3xl font-bold text-foreground text-center mb-8">
-        Profil utilisateur
-      </h1>
-
-      <section className="mb-12">
+    <PageContainer>
+      <section>
+        <h1 className="mb-6 text-center text-lg font-bold text-black">
+          Profil utilisateur
+        </h1>
         <ProfileForm username={user.username} email={user.email} />
       </section>
 
-      <hr className="border-border my-12" />
+      <hr className="my-8 border-gray-500" />
 
       <section>
-        <h2 className="text-2xl font-bold text-foreground text-center mb-6">
+        <h2 className="mb-4 text-center text-lg font-bold text-black">
           Abonnements
         </h2>
         <SubscriptionsList subscriptions={subscriptionsWithId} />
       </section>
-    </div>
+    </PageContainer>
   );
 }

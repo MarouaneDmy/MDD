@@ -3,6 +3,8 @@
 
 import { useState } from "react";
 import { updateProfile } from "@/app/actions/profile.actions";
+import TextField from "@/app/components/ui/TextField";
+import { Button } from "@/app/components/ui/Button";
 
 interface ProfileFormProps {
   username: string;
@@ -23,18 +25,15 @@ export default function ProfileForm({
     setSuccess(false);
     setIsLoading(true);
 
-    const formData = new FormData(e.currentTarget);
-    const result = await updateProfile(formData);
-
-    // 👇 AJOUTE CETTE LIGNE POUR VOIR L'ERREUR EXACTE RETOURNÉE
-    console.log("🔍 RÉSULTAT DE updateProfile:", result);
+    // e.currentTarget vaut null après un await : on garde la référence
+    const form = e.currentTarget;
+    const result = await updateProfile(new FormData(form));
 
     if (result.success) {
       setSuccess(true);
-      // Réinitialiser le champ mot de passe
-      const passwordInput = document.getElementById(
+      const passwordInput = form.elements.namedItem(
         "password",
-      ) as HTMLInputElement;
+      ) as HTMLInputElement | null;
       if (passwordInput) passwordInput.value = "";
     } else {
       setError(result.error || "Une erreur est survenue");
@@ -44,89 +43,57 @@ export default function ProfileForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 max-w-md mx-auto">
-      {/* Username */}
-      <div>
-        <label
-          htmlFor="username"
-          className="block text-sm font-medium text-foreground mb-2"
-        >
-          Username
-        </label>
-        <input
-          id="username"
-          name="username"
-          type="text"
-          defaultValue={initialUsername}
-          required
-          minLength={3}
-          maxLength={50}
-          className="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:outline-none bg-background text-foreground"
-        />
-      </div>
+    <form onSubmit={handleSubmit} className="mx-auto max-w-md space-y-3">
+      <TextField
+        id="username"
+        name="username"
+        label="Username"
+        type="text"
+        placeholder="Username"
+        defaultValue={initialUsername}
+        autoComplete="username"
+        required
+        minLength={3}
+        maxLength={50}
+      />
 
-      {/* Email */}
-      <div>
-        <label
-          htmlFor="email"
-          className="block text-sm font-medium text-foreground mb-2"
-        >
-          Email
-        </label>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          defaultValue={initialEmail}
-          required
-          className="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:outline-none bg-background text-foreground"
-        />
-      </div>
+      <TextField
+        id="email"
+        name="email"
+        label="Email"
+        type="email"
+        placeholder="email@email.fr"
+        defaultValue={initialEmail}
+        autoComplete="email"
+        required
+      />
 
-      {/* Mot de passe */}
-      <div>
-        <label
-          htmlFor="password"
-          className="block text-sm font-medium text-foreground mb-2"
-        >
-          Mot de passe
-        </label>
-        <input
-          id="password"
-          name="password"
-          type="password"
-          placeholder="Laisser vide pour conserver le mot de passe actuel"
-          minLength={8}
-          className="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:outline-none bg-background text-foreground"
-        />
-        <p className="text-sm text-muted-foreground mt-1">
-          Laissez ce champ vide si vous ne souhaitez pas changer votre mot de
-          passe
-        </p>
-      </div>
+      <TextField
+        id="password"
+        name="password"
+        label="Mot de passe (laisser vide pour conserver le mot de passe actuel)"
+        type="password"
+        placeholder="Mot de passe"
+        autoComplete="new-password"
+        minLength={8}
+      />
 
-      {/* Messages */}
       {error && (
-        <div className="text-red-500 text-sm bg-red-50 p-3 rounded border border-red-200">
+        <div className="rounded border border-red-200 bg-red-50 p-3 text-sm text-red-600">
           {error}
         </div>
       )}
 
       {success && (
-        <div className="text-green-600 text-sm bg-green-50 p-3 rounded border border-green-200">
+        <div className="rounded border border-green-200 bg-green-50 p-3 text-sm text-green-600">
           Profil mis à jour avec succès !
         </div>
       )}
 
-      {/* Bouton de soumission */}
-      <div className="flex justify-center pt-4">
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="bg-primary text-primary-foreground px-8 py-3 rounded-lg font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isLoading ? "Sauvegarde en cours..." : "Sauvegarder"}
-        </button>
+      <div className="flex justify-center pt-3">
+        <Button type="submit" disabled={isLoading} className="w-32">
+          {isLoading ? "Sauvegarde..." : "Sauvegarder"}
+        </Button>
       </div>
     </form>
   );

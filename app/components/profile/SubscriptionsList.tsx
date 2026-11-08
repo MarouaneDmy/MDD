@@ -1,7 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { unsubscribeFromTopic } from "@/app/actions/profile.actions";
+import TopicCard from "@/app/components/ui/TopicCard";
+import { Button } from "@/app/components/ui/Button";
 
 interface Topic {
   id: string;
@@ -19,6 +23,7 @@ interface SubscriptionsListProps {
 export default function SubscriptionsList({
   subscriptions,
 }: SubscriptionsListProps) {
+  const router = useRouter();
   const [loadingIds, setLoadingIds] = useState<Set<string>>(new Set());
 
   async function handleUnsubscribe(topicId: string) {
@@ -27,53 +32,47 @@ export default function SubscriptionsList({
     const result = await unsubscribeFromTopic(topicId);
 
     if (result.success) {
-      // Recharger la page pour mettre à jour la liste
-      window.location.reload();
+      router.refresh();
+      return;
     }
 
     setLoadingIds((prev) => {
-      const newSet = new Set(prev);
-      newSet.delete(topicId);
-      return newSet;
+      const next = new Set(prev);
+      next.delete(topicId);
+      return next;
     });
   }
 
   if (subscriptions.length === 0) {
     return (
-      <div className="text-center py-8 text-muted-foreground">
-        <p>Vous nêtes abonné à aucun thème pour le moment.</p>
-        <p className="text-sm mt-2">
-          <a href="/themes" className="text-primary hover:underline">
+      <div className="py-8 text-center text-gray-600">
+        <p>Vous n&apos;êtes abonné à aucun thème pour le moment.</p>
+        <p className="mt-2 text-sm">
+          <Link href="/themes" className="text-primary hover:underline">
             Parcourir les thèmes
-          </a>
+          </Link>
         </p>
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {subscriptions.map((subscription) => (
-        <div
-          key={subscription.id}
-          className="bg-card border border-border rounded-lg p-4"
+    <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+      {subscriptions.map(({ id, topic }) => (
+        <TopicCard
+          key={id}
+          name={topic.name}
+          description={topic.description}
+          headingLevel="h3"
         >
-          <h3 className="font-semibold text-foreground mb-2">
-            {subscription.topic.name}
-          </h3>
-          {subscription.topic.description && (
-            <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
-              {subscription.topic.description}
-            </p>
-          )}
-          <button
-            onClick={() => handleUnsubscribe(subscription.topic.id)}
-            disabled={loadingIds.has(subscription.topic.id)}
-            className="w-full bg-primary text-primary-foreground py-2 rounded-lg font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+          <Button
+            onClick={() => handleUnsubscribe(topic.id)}
+            disabled={loadingIds.has(topic.id)}
+            className="w-36"
           >
-            {loadingIds.has(subscription.topic.id) ? "..." : "Se désabonner"}
-          </button>
-        </div>
+            {loadingIds.has(topic.id) ? "..." : "Se désabonner"}
+          </Button>
+        </TopicCard>
       ))}
     </div>
   );

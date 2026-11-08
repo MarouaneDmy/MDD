@@ -7,7 +7,9 @@ export default function AuthLayout({
 }) {
   return (
     <div className="min-h-screen bg-background">
-      <Header variant="logo-only" />
+      <div className="hidden md:block">
+        <Header variant="logo-only" />
+      </div>
       <main>{children}</main>
     </div>
   );

@@ -7,5 +7,5 @@ export default function PageContainer({
   children,
   className = "",
 }: PageContainerProps) {
-  return <div className={`w-full px-6 py-6 ${className}`}>{children}</div>;
+  return <div className={`w-full px-10 py-6 ${className}`}>{children}</div>;
 }

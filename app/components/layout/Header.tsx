@@ -15,7 +15,11 @@ export default async function Header({ variant = "full" }: HeaderProps) {
   const homeHref = session?.user ? "/feed" : "/";
 
   return (
-    <header className="border-b border-black">
+    <header
+      className={`border-b border-black ${
+        variant === "logo-only" ? "hidden md:block" : ""
+      }`}
+    >
       <div className="flex items-center justify-between px-6 py-3">
         <Link href={homeHref} className="flex items-center">
           <Image
