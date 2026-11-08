@@ -47,7 +47,9 @@ export default async function ArticleDetailPage({
             <span>{formatDate(article.createdAt)}</span>
             <span>{article.author.username}</span>
             {article.topics.length > 0 && (
-              <span>{article.topics.map((t) => t.topic.name).join(", ")}</span>
+              <span className="basis-full md:basis-auto">
+                {article.topics.map((t) => t.topic.name).join(", ")}
+              </span>
             )}
           </div>
 

@@ -26,10 +26,10 @@ export default async function ProfilePage() {
         <ProfileForm username={user.username} email={user.email} />
       </section>
 
-      <hr className="my-8 border-gray-500" />
+      <hr className="mt-8 mb-2 border-gray-500" />
 
       <section>
-        <h2 className="mb-4 text-center text-lg font-bold text-black">
+        <h2 className="mb-2 text-center text-lg font-bold text-black">
           Abonnements
         </h2>
         <SubscriptionsList subscriptions={subscriptionsWithId} />

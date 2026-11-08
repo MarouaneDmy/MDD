@@ -34,9 +34,11 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
 
   return (
     <div className="container mx-auto px-6 py-8">
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex flex-col items-center gap-4 md:flex-row md:justify-between">
         <Button href="/articles/new">Créer un article</Button>
-        <SortSelect />
+        <div className="flex w-full justify-center md:w-auto md:justify-end">
+          <SortSelect />
+        </div>
       </div>
 
       {articles.length === 0 ? (

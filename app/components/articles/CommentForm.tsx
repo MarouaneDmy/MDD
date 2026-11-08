@@ -34,8 +34,8 @@ export default function CommentForm({ articleId }: CommentFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="pl-6">
-      <div className="flex items-center gap-4">
+    <form onSubmit={handleSubmit} className="md:pl-6">
+      <div className="flex items-center gap-3 md:gap-4">
         <textarea
           name="content"
           value={content}
@@ -51,7 +51,7 @@ export default function CommentForm({ articleId }: CommentFormProps) {
           disabled={isLoading || !content.trim()}
           className="shrink-0 cursor-pointer text-primary transition-opacity hover:opacity-80 disabled:cursor-not-allowed"
         >
-          <Send className="h-8 w-8" strokeWidth={1.5} />
+          <Send className="h-7 w-7 md:h-8 md:w-8" strokeWidth={1.5} />
         </button>
       </div>
       {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
