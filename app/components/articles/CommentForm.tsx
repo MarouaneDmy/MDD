@@ -1,9 +1,8 @@
-// components/articles/CommentForm.tsx
 "use client";
 
 import { useState } from "react";
-import { addComment } from "@/app/actions/comment.actions";
 import { Send } from "lucide-react";
+import { addComment } from "@/app/actions/comment.actions";
 
 interface CommentFormProps {
   articleId: string;
@@ -26,7 +25,7 @@ export default function CommentForm({ articleId }: CommentFormProps) {
     const result = await addComment(formData);
 
     if (result.success) {
-      setContent(""); // Réinitialiser le formulaire
+      setContent("");
     } else {
       setError(result.error ?? null);
     }
@@ -35,29 +34,27 @@ export default function CommentForm({ articleId }: CommentFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-6">
-      <div className="flex gap-3">
-        <div className="flex-1">
-          <textarea
-            name="content"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="Écrivez ici votre commentaire"
-            rows={3}
-            required
-            className="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:outline-none bg-background text-foreground resize-none"
-          />
-          {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-        </div>
+    <form onSubmit={handleSubmit} className="pl-6">
+      <div className="flex items-center gap-4">
+        <textarea
+          name="content"
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          placeholder="Écrivez ici votre commentaire"
+          rows={3}
+          required
+          className="flex-1 resize-none rounded-2xl border border-black bg-white p-4 text-sm text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary"
+        />
         <button
           type="submit"
           aria-label="Envoyer le commentaire"
           disabled={isLoading || !content.trim()}
-          className="self-end p-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="shrink-0 cursor-pointer text-primary transition-opacity hover:opacity-80 disabled:cursor-not-allowed"
         >
-          <Send className="w-5 h-5" />
+          <Send className="h-8 w-8" strokeWidth={1.5} />
         </button>
       </div>
+      {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
     </form>
   );
 }

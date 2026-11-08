@@ -3,9 +3,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { createArticle } from "@/app/actions/article.actions";
-import { ArrowLeft } from "lucide-react";
+import BackTitle from "@/app/components/ui/BackTitle";
+import PageContainer from "@/app/components/ui/PageContainer";
+import { Button } from "@/app/components/ui/Button";
 
 interface Topic {
   id: string;
@@ -17,11 +18,13 @@ interface CreateArticleFormProps {
   topics: Topic[];
 }
 
+const fieldStyles =
+  "w-full rounded-lg border border-primary bg-white px-3 py-2 text-sm text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary";
+
 export default function CreateArticleForm({ topics }: CreateArticleFormProps) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -29,12 +32,6 @@ export default function CreateArticleForm({ topics }: CreateArticleFormProps) {
     setIsLoading(true);
 
     const formData = new FormData(e.currentTarget);
-
-    // Ajouter les topics sélectionnés au FormData
-    selectedTopics.forEach((topicId) => {
-      formData.append("topics", topicId);
-    });
-
     const result = await createArticle(formData);
 
     if (result.success && result.articleId) {
@@ -46,76 +43,41 @@ export default function CreateArticleForm({ topics }: CreateArticleFormProps) {
     setIsLoading(false);
   }
 
-  function handleTopicChange(topicId: string) {
-    setSelectedTopics((prev) =>
-      prev.includes(topicId)
-        ? prev.filter((id) => id !== topicId)
-        : [...prev, topicId],
-    );
-  }
-
   return (
-    <div className="container mx-auto px-4 py-8 max-w-2xl">
-      {/* Bouton retour */}
-      <Link
+    <PageContainer>
+      <BackTitle
         href="/feed"
-        className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-6"
-      >
-        <ArrowLeft className="w-5 h-5" />
-        <span>Retour</span>
-      </Link>
+        title="Créer un nouvel article"
+        backLabel="Retour aux articles"
+        centered
+      />
 
-      {/* Titre de la page */}
-      <h1 className="text-3xl font-bold text-foreground text-center mb-8">
-        Créer un nouvel article
-      </h1>
-
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Sélection des thèmes */}
+      <form onSubmit={handleSubmit} className="mx-auto mt-8 max-w-md space-y-3">
         <div>
-          <label className="block text-sm font-medium text-foreground mb-2">
-            Thèmes
+          <label htmlFor="topics" className="sr-only">
+            Thème
           </label>
-          <div className="space-y-2">
+          <select
+            id="topics"
+            name="topics"
+            required
+            defaultValue=""
+            className={`${fieldStyles} cursor-pointer invalid:text-gray-500`}
+          >
+            <option value="" disabled>
+              Sélectionner un thème
+            </option>
             {topics.map((topic) => (
-              <label
-                key={topic.id}
-                className="flex items-center gap-3 p-3 border border-border rounded-lg hover:bg-muted/50 cursor-pointer transition-colors"
-              >
-                <input
-                  type="checkbox"
-                  value={topic.id}
-                  checked={selectedTopics.includes(topic.id)}
-                  onChange={() => handleTopicChange(topic.id)}
-                  className="w-4 h-4 text-primary border-border rounded focus:ring-primary"
-                />
-                <div>
-                  <span className="font-medium text-foreground">
-                    {topic.name}
-                  </span>
-                  {topic.description && (
-                    <p className="text-sm text-muted-foreground">
-                      {topic.description}
-                    </p>
-                  )}
-                </div>
-              </label>
+              <option key={topic.id} value={topic.id} className="text-black">
+                {topic.name}
+              </option>
             ))}
-          </div>
-          {selectedTopics.length === 0 && (
-            <p className="text-red-500 text-sm mt-2">
-              Veuillez sélectionner au moins un thème
-            </p>
-          )}
+          </select>
         </div>
 
-        {/* Titre de l'article */}
         <div>
-          <label
-            htmlFor="title"
-            className="block text-sm font-medium text-foreground mb-2"
-          >
-            {"Titre de l'article"}
+          <label htmlFor="title" className="sr-only">
+            Titre de l&apos;article
           </label>
           <input
             id="title"
@@ -125,17 +87,13 @@ export default function CreateArticleForm({ topics }: CreateArticleFormProps) {
             minLength={5}
             maxLength={200}
             placeholder="Titre de l'article"
-            className="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:outline-none bg-background text-foreground"
+            className={fieldStyles}
           />
         </div>
 
-        {/* Contenu de l'article */}
         <div>
-          <label
-            htmlFor="content"
-            className="block text-sm font-medium text-foreground mb-2"
-          >
-            {"Contenu de l'article"}
+          <label htmlFor="content" className="sr-only">
+            Contenu de l&apos;article
           </label>
           <textarea
             id="content"
@@ -143,33 +101,24 @@ export default function CreateArticleForm({ topics }: CreateArticleFormProps) {
             required
             minLength={50}
             maxLength={5000}
-            rows={8}
+            rows={12}
             placeholder="Contenu de l'article"
-            className="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:outline-none bg-background text-foreground resize-none"
+            className={`${fieldStyles} resize-none`}
           />
-          <p className="text-sm text-muted-foreground mt-1">
-            Minimum 50 caractères
-          </p>
         </div>
 
-        {/* Message d'erreur */}
         {error && (
-          <div className="text-red-500 text-sm bg-red-50 p-3 rounded border border-red-200">
+          <div className="rounded border border-red-200 bg-red-50 p-3 text-sm text-red-600">
             {error}
           </div>
         )}
 
-        {/* Bouton de soumission */}
         <div className="flex justify-center pt-4">
-          <button
-            type="submit"
-            disabled={isLoading || selectedTopics.length === 0}
-            className="bg-primary text-primary-foreground px-8 py-3 rounded-lg font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isLoading ? "Création en cours..." : "Créer"}
-          </button>
+          <Button type="submit" disabled={isLoading} className="w-32">
+            {isLoading ? "Création..." : "Créer"}
+          </Button>
         </div>
       </form>
-    </div>
+    </PageContainer>
   );
 }
