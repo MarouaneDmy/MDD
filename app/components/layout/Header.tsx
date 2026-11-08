@@ -1,6 +1,8 @@
 import Link from "next/link";
+import Image from "next/image";
 import { signOut, auth } from "@/auth";
 import { UserIcon } from "lucide-react";
+import NavLink from "./NavLink";
 
 type HeaderVariant = "full" | "logo-only";
 
@@ -10,33 +12,24 @@ interface HeaderProps {
 
 export default async function Header({ variant = "full" }: HeaderProps) {
   const session = await auth();
-
   const homeHref = session?.user ? "/feed" : "/";
 
   return (
-    <header className="border-b border-border bg-background">
-      <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-        <Link href={homeHref} className="flex items-center gap-2">
-          <div className="bg-primary text-primary-foreground text-2xl font-bold px-4 py-2 rounded-xl">
-            MDD
-          </div>
+    <header className="border-b border-black">
+      <div className="flex items-center justify-between px-6 py-3">
+        <Link href={homeHref} className="flex items-center">
+          <Image
+            src="/logo.png"
+            alt="Logo Monde de Dév"
+            width={110}
+            height={64}
+            className="h-auto object-contain"
+            priority
+          />
         </Link>
 
         {variant === "full" && session?.user && (
           <nav className="flex items-center gap-6">
-            <Link
-              href="/feed"
-              className="text-foreground hover:text-primary transition-colors font-medium"
-            >
-              Articles
-            </Link>
-            <Link
-              href="/themes"
-              className="text-foreground hover:text-primary transition-colors font-medium"
-            >
-              Thèmes
-            </Link>
-
             <form
               action={async () => {
                 "use server";
@@ -45,19 +38,21 @@ export default async function Header({ variant = "full" }: HeaderProps) {
             >
               <button
                 type="submit"
-                className="text-red-600 hover:text-red-700 font-medium transition-colors"
+                className="cursor-pointer text-sm font-bold text-red-800 transition-colors hover:text-red-600"
               >
                 Se déconnecter
               </button>
             </form>
 
-            {/* Lien vers le profil */}
+            <NavLink href="/feed">Articles</NavLink>
+            <NavLink href="/themes">Thèmes</NavLink>
+
             <Link
               href="/profile"
-              className="p-2 rounded-full hover:bg-muted transition-colors"
               aria-label="Mon profil"
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-300 transition-colors hover:bg-gray-400"
             >
-              <UserIcon className="w-5 h-5 text-foreground" />
+              <UserIcon className="h-5 w-5 text-gray-600" />
             </Link>
           </nav>
         )}

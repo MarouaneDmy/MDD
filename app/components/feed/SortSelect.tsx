@@ -2,37 +2,42 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTransition } from "react";
+import { ArrowDown, ArrowUp } from "lucide-react";
 
 export default function SortSelect() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
 
-  // Récupère la valeur actuelle dans l'URL, ou "recent" par défaut
-  const currentSort = searchParams.get("sort") || "recent";
+  const isOldest = searchParams.get("sort") === "oldest";
 
-  function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
-    const nextSort = e.target.value;
+  function handleToggle() {
     const params = new URLSearchParams(searchParams.toString());
-    params.set("sort", nextSort);
+    params.set("sort", isOldest ? "recent" : "oldest");
 
-    // startTransition permet de mettre à jour l'URL sans bloquer le thread principal
     startTransition(() => {
       router.replace(`?${params.toString()}`, { scroll: false });
     });
   }
 
   return (
-    <select
-      name="sort"
-      aria-label="Trier les articles"
-      value={currentSort}
-      onChange={handleChange}
+    <button
+      type="button"
+      onClick={handleToggle}
       disabled={isPending}
-      className="border border-border rounded px-3 py-2 bg-background text-foreground focus:ring-2 focus:ring-primary focus:outline-none cursor-pointer disabled:opacity-50"
+      aria-label={
+        isOldest
+          ? "Trier par : plus anciens en premier"
+          : "Trier par : plus récents en premier"
+      }
+      className="flex cursor-pointer items-center gap-2 font-bold text-black disabled:opacity-50"
     >
-      <option value="recent">Plus récents</option>
-      <option value="oldest">Plus anciens</option>
-    </select>
+      Trier par
+      {isOldest ? (
+        <ArrowUp className="h-5 w-5" />
+      ) : (
+        <ArrowDown className="h-5 w-5" />
+      )}
+    </button>
   );
 }

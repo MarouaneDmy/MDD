@@ -4,6 +4,8 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
+import { MoveLeft } from "lucide-react";
+import { Input } from "@/app/components/ui/Input";
 
 export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
@@ -18,11 +20,10 @@ export default function LoginPage() {
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
 
-    // Appel à la fonction signIn de NextAuth
     const result = await signIn("credentials", {
       email,
       password,
-      redirect: false, // On gère la redirection nous-même
+      redirect: false,
     });
 
     if (result?.error) {
@@ -34,65 +35,53 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-card p-8 rounded-xl shadow-lg border border-border">
-        <h1 className="text-2xl font-bold text-center mb-6 text-foreground">
-          Connexion à MDD
-        </h1>
+    <div className="bg-background flex flex-col">
+      <div className="px-4 md:px-10 py-2 flex items-center gap-4">
+        <Link href="/">
+          <MoveLeft className="w-10 h-10" />
+        </Link>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium mb-1">
-              Email
-            </label>
-            <input
+        <h1 className="text-3xl text-foreground flex-1 text-center pr-16 pt-8">
+          Se connecter
+        </h1>
+      </div>
+
+      <div className="flex-1 flex items-start justify-center px-4 pt-4 pb-12">
+        <div className="w-full max-w-md">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <Input
               id="email"
               name="email"
               type="email"
+              label="E-mail ou nom d'utilisateur"
               required
-              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:outline-none bg-background text-foreground"
-              placeholder="marouane@mdd.dev"
             />
-          </div>
 
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium mb-1"
-            >
-              Mot de passe
-            </label>
-            <input
+            <Input
               id="password"
               name="password"
               type="password"
+              label="Mot de passe"
               required
-              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:outline-none bg-background text-foreground"
-              placeholder="••••••••"
             />
-          </div>
 
-          {error && (
-            <div className="text-red-500 text-sm bg-red-50 p-2 rounded border border-red-200">
-              {error}
+            {error && (
+              <div className="text-red-500 text-sm bg-red-50 p-3 rounded border border-red-200">
+                {error}
+              </div>
+            )}
+
+            <div className="flex justify-center pt-2">
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-[139px] h-[40px] bg-[#7763C5] text-white font-bold rounded-lg hover:bg-[#6a55b5] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isLoading ? "..." : "Se connecter"}
+              </button>
             </div>
-          )}
-
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full bg-primary text-primary-foreground py-2 rounded-lg font-medium hover:bg-primary/90 transition disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isLoading ? "Connexion en cours..." : "Se connecter"}
-          </button>
-        </form>
-
-        <p className="text-center text-sm text-muted-foreground mt-4">
-          Pas encore de compte ?{" "}
-          <Link href="/register" className="text-primary hover:underline">
-            {"S'inscrire"}
-          </Link>
-        </p>
+          </form>
+        </div>
       </div>
     </div>
   );
