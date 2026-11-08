@@ -6,6 +6,13 @@ export default defineConfig({
     environment: "node",
     include: ["**/*.test.ts"],
     exclude: ["**/node_modules/**", "**/e2e/**"],
+    fileParallelism: false,
+    coverage: {
+      provider: "v8",
+      include: ["lib/**/*.ts", "app/actions/**/*.ts"],
+      exclude: ["**/*.test.ts", "**/*.d.ts"],
+      reporter: ["text", "html"],
+    },
   },
   resolve: {
     alias: {
