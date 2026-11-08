@@ -1,21 +1,37 @@
 import { test, expect } from "@playwright/test";
+import { PrismaClient } from "@prisma/client";
+import { login } from "./helpers/auth";
+
+const prisma = new PrismaClient();
+
+const ARTICLE_TITLE = "Mon article Playwright E2E";
+const ARTICLE_CONTENT =
+  "Ceci est un contenu de test généré par Playwright. Il contient plus de 50 caractères pour valider le schéma Zod avec succès.";
+const COMMENT_TEXT = "Commentaire de test E2E !";
 
 test.describe("Articles", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/login");
-    await page.getByLabel("Email").fill("marouane@mdd.dev");
-    await page.getByLabel("Mot de passe").fill("password123");
-    await page.getByRole("button", { name: "Se connecter" }).click();
-    await page.waitForURL("/feed");
+    await login(page);
+  });
+
+  test.afterAll(async () => {
+    // Supprime ce que les tests ont créé (y compris les restes des anciens runs)
+    await prisma.comment.deleteMany({ where: { content: COMMENT_TEXT } });
+    await prisma.article.deleteMany({ where: { title: ARTICLE_TITLE } });
+    await prisma.$disconnect();
   });
 
   test("devrait afficher les articles du seed sur le feed", async ({
     page,
   }) => {
     await expect(
-      page.getByText("Pourquoi TypeScript est incontournable"),
+      page.getByRole("heading", {
+        name: "Pourquoi TypeScript est incontournable",
+      }),
     ).toBeVisible();
-    await expect(page.getByText("Les bases du Web3")).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Les bases du Web3" }),
+    ).toBeVisible();
   });
 
   test("devrait permettre de créer un nouvel article", async ({ page }) => {
@@ -23,54 +39,59 @@ test.describe("Articles", () => {
     await page.waitForURL("/articles/new");
 
     await page
-      .getByLabel("Titre de l'article")
-      .fill("Mon article Playwright E2E");
-    await page
-      .getByLabel("Contenu de l'article")
-      .fill(
-        "Ceci est un contenu de test généré par Playwright. Il contient plus de 50 caractères pour valider le schéma Zod avec succès.",
-      );
+      .getByLabel("Thème", { exact: true })
+      .selectOption({ label: "JavaScript" });
+    await page.getByLabel("Titre de l'article").fill(ARTICLE_TITLE);
+    await page.getByLabel("Contenu de l'article").fill(ARTICLE_CONTENT);
 
-    await page
-      .locator("label")
-      .filter({ has: page.getByText("JavaScript", { exact: true }) })
-      .locator('input[type="checkbox"]')
-      .check();
+    await page.getByRole("button", { name: "Créer", exact: true }).click();
 
-    await page.getByRole("button", { name: "Créer" }).click();
+    // (?!new) : on attend la page de l'article, pas /articles/new
+    await page.waitForURL(/\/articles\/(?!new)/);
 
-    await page.waitForURL(/\/articles\//);
-    await expect(page.getByText("Mon article Playwright E2E")).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: ARTICLE_TITLE }),
+    ).toBeVisible();
     await expect(page.getByText("Ceci est un contenu de test")).toBeVisible();
   });
 
   test("devrait permettre de lire un article et d'ajouter un commentaire", async ({
     page,
   }) => {
-    await page.getByText("Pourquoi TypeScript est incontournable").click();
-    await page.waitForURL(/\/articles\//);
+    await page
+      .locator('a[href^="/articles/"]', {
+        hasText: "Pourquoi TypeScript est incontournable",
+      })
+      .click();
+    await page.waitForURL(/\/articles\/(?!new)/);
 
     await expect(
       page.getByText("TypeScript ajoute un typage statique"),
     ).toBeVisible();
 
-    const commentText = "Commentaire de test E2E !";
     await page
       .getByPlaceholder("Écrivez ici votre commentaire")
-      .fill(commentText);
-
+      .fill(COMMENT_TEXT);
     await page.getByRole("button", { name: "Envoyer le commentaire" }).click();
 
-    await expect(
-      page.locator("p").filter({ hasText: commentText }).first(),
-    ).toBeVisible();
+    await expect(page.getByText(COMMENT_TEXT).first()).toBeVisible();
   });
 
-  test("devrait trier les articles par plus anciens", async ({ page }) => {
-    await page.locator('select[name="sort"]').selectOption("oldest");
+  test("devrait trier les articles par plus anciens puis par plus récents", async ({
+    page,
+  }) => {
+    const sortButton = page.getByRole("button", { name: /trier par/i });
 
-    await page.waitForURL(/.*\?sort=oldest/);
+    await sortButton.click();
+    await page.waitForURL(/\?sort=oldest/);
+    await expect(
+      page.getByRole("button", { name: /plus anciens en premier/i }),
+    ).toBeVisible();
 
-    await expect(page.locator('select[name="sort"]')).toHaveValue("oldest");
+    await sortButton.click();
+    await page.waitForURL(/\?sort=recent/);
+    await expect(
+      page.getByRole("button", { name: /plus récents en premier/i }),
+    ).toBeVisible();
   });
 });
