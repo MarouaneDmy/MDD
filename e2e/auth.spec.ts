@@ -1,4 +1,3 @@
-// e2e/auth.spec.ts
 import { test, expect } from "@playwright/test";
 
 test.describe("Authentification", () => {
@@ -31,18 +30,17 @@ test.describe("Authentification", () => {
   test("devrait permettre à un nouvel utilisateur de s'inscrire", async ({
     page,
   }) => {
-    // 👇 CORRECTION : On rend le username UNIQUE lui aussi !
     const randomSuffix =
       Date.now().toString(36) + Math.random().toString(36).substring(2, 8);
     const uniqueEmail = `e2e_${randomSuffix}@mdd.dev`;
-    const uniqueUsername = `e2e_user_${randomSuffix}`; // <-- C'était le coupable !
+    const uniqueUsername = `e2e_user_${randomSuffix}`;
 
     console.log("📧 Email:", uniqueEmail, "| 👤 Username:", uniqueUsername);
 
     await page.goto("/register");
 
     await page.getByLabel("Email").fill(uniqueEmail);
-    await page.getByLabel("Nom d'utilisateur").fill(uniqueUsername); // <-- On utilise la variable unique
+    await page.getByLabel("Nom d'utilisateur").fill(uniqueUsername);
     await page.getByLabel("Mot de passe").fill("SecurePassword123!");
 
     await page.getByRole("button", { name: "S'inscrire" }).click();

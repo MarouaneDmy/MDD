@@ -16,7 +16,7 @@ describe("Test Unitaire : Schéma de validation Article", () => {
 
   it("devrait rejeter un titre trop court (min 5 caractères)", () => {
     const invalidData = {
-      title: "Tit", // Trop court
+      title: "Tit",
       content: "Contenu valide et suffisamment long pour passer la validation",
       topicIds: ["topic1"],
     };

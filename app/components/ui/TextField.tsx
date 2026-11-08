@@ -3,7 +3,7 @@ export const fieldStyles =
 
 interface TextFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   id: string;
-  label: string; // lu par les lecteurs d'écran, masqué visuellement
+  label: string;
 }
 
 export default function TextField({

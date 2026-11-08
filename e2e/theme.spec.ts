@@ -13,7 +13,7 @@ test.describe("Gestion des Thèmes", () => {
     await page.goto("/themes");
 
     const themeCard = page.locator("article", {
-      hasText: "JavaScript", // On utilise JavaScript qui semble avoir un état incertain
+      hasText: "JavaScript",
     });
 
     const unsubscribeBtn = themeCard.getByRole("button", {
@@ -21,18 +21,15 @@ test.describe("Gestion des Thèmes", () => {
     });
     if (await unsubscribeBtn.isVisible()) {
       await unsubscribeBtn.click();
-      // Attendre que le bouton redevienne "S'abonner"
       await expect(
         themeCard.getByRole("button", { name: "S'abonner" }),
       ).toBeVisible({ timeout: 3000 });
     }
 
-    // ÉTAPE 1 : Maintenant on peut s'abonner proprement
     const subscribeBtn = themeCard.getByRole("button", { name: "S'abonner" });
     await expect(subscribeBtn).toBeVisible();
     await subscribeBtn.click();
 
-    // ÉTAPE 2 : Vérifier le changement d'état
     await expect(
       themeCard.getByRole("button", { name: "Déjà abonné" }),
     ).toBeVisible();

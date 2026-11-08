@@ -17,7 +17,6 @@ export async function addComment(formData: FormData) {
   const content = formData.get("content") as string;
   const articleId = formData.get("articleId") as string;
 
-  // Validation avec Zod
   const validatedData = commentSchema.safeParse({ content, articleId });
 
   if (!validatedData.success) {
@@ -36,7 +35,6 @@ export async function addComment(formData: FormData) {
       },
     });
 
-    // Revalider la page pour afficher le nouveau commentaire
     revalidatePath(`/articles/${articleId}`);
 
     return { success: true };

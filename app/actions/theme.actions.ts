@@ -1,4 +1,3 @@
-// app/actions/theme.actions.ts
 "use server";
 
 import { auth } from "@/auth";
@@ -17,7 +16,6 @@ export async function toggleSubscription(topicId: string) {
   const userId = session.user.id;
 
   try {
-    // Vérifier si l'utilisateur est déjà abonné
     const existingSubscription = await prisma.subscription.findUnique({
       where: {
         userId_topicId: {
@@ -28,7 +26,6 @@ export async function toggleSubscription(topicId: string) {
     });
 
     if (existingSubscription) {
-      // Désabonnement
       await prisma.subscription.delete({
         where: {
           userId_topicId: {
@@ -43,7 +40,6 @@ export async function toggleSubscription(topicId: string) {
 
       return { success: true, action: "unsubscribed" };
     } else {
-      // Abonnement
       await prisma.subscription.create({
         data: {
           userId,
@@ -78,7 +74,6 @@ export async function getAllTopicsWithSubscriptionStatus() {
     },
   });
 
-  // Si l'utilisateur est connecté, ajouter l'info d'abonnement
   if (userId) {
     const userSubscriptions = await prisma.subscription.findMany({
       where: { userId },

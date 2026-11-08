@@ -1,4 +1,3 @@
-// app/components/articles/CreateArticleForm.tsx
 "use client";
 
 import { useState } from "react";

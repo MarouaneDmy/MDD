@@ -1,4 +1,3 @@
-// app/(dashboard)/profile/page.tsx
 import { redirect } from "next/navigation";
 import { getUserProfile } from "@/app/actions/profile.actions";
 import ProfileForm from "@/app/components/profile/ProfileForm";

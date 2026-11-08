@@ -1,4 +1,3 @@
-// app/actions/article.actions.ts
 "use server";
 
 import { auth } from "@/auth";
@@ -22,7 +21,6 @@ export async function createArticle(formData: FormData) {
   const content = formData.get("content") as string;
   const topicIds = formData.getAll("topics") as string[];
 
-  // Validation avec Zod
   const validatedData = articleSchema.safeParse({ title, content, topicIds });
 
   if (!validatedData.success) {
@@ -46,7 +44,6 @@ export async function createArticle(formData: FormData) {
       },
     });
 
-    // Revalider le fil d'actualité
     revalidatePath("/feed");
 
     return { success: true, articleId: article.id };
@@ -58,7 +55,6 @@ export async function createArticle(formData: FormData) {
   }
 }
 
-// Fonction utilitaire pour récupérer tous les thèmes
 export async function getAllTopics() {
   return await prisma.topic.findMany({
     orderBy: {

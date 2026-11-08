@@ -1,7 +1,6 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Articles", () => {
-  // Le beforeEach est parfait : il isole chaque test en reconnectant l'utilisateur
   test.beforeEach(async ({ page }) => {
     await page.goto("/login");
     await page.getByLabel("Email").fill("marouane@mdd.dev");
@@ -32,7 +31,6 @@ test.describe("Articles", () => {
         "Ceci est un contenu de test généré par Playwright. Il contient plus de 50 caractères pour valider le schéma Zod avec succès.",
       );
 
-    // Sélecteur robuste pour la checkbox (parfait !)
     await page
       .locator("label")
       .filter({ has: page.getByText("JavaScript", { exact: true }) })
@@ -49,16 +47,13 @@ test.describe("Articles", () => {
   test("devrait permettre de lire un article et d'ajouter un commentaire", async ({
     page,
   }) => {
-    // Cliquer sur le premier article du feed
     await page.getByText("Pourquoi TypeScript est incontournable").click();
     await page.waitForURL(/\/articles\//);
 
-    // Vérifier que le contenu est bien affiché
     await expect(
       page.getByText("TypeScript ajoute un typage statique"),
     ).toBeVisible();
 
-    // Ajouter un commentaire
     const commentText = "Commentaire de test E2E !";
     await page
       .getByPlaceholder("Écrivez ici votre commentaire")
@@ -66,7 +61,6 @@ test.describe("Articles", () => {
 
     await page.getByRole("button", { name: "Envoyer le commentaire" }).click();
 
-    // Vérifier que le commentaire apparaît dans la liste
     await expect(
       page.locator("p").filter({ hasText: commentText }).first(),
     ).toBeVisible();

@@ -1,4 +1,3 @@
-// prisma/seed.ts
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
@@ -7,9 +6,7 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("🌱 Début du seeding de la base de données...");
 
-  // ==========================================
-  // 1. CRÉATION DE TOUS LES THÈMES (Indépendants)
-  // ==========================================
+  // CRÉATION DE TOUS LES THÈMES (Indépendants)
   const topicJS = await prisma.topic.upsert({
     where: { name: "JavaScript" },
     update: {},
@@ -66,9 +63,7 @@ async function main() {
     },
   });
 
-  // ==========================================
-  // 2. CRÉATION DES UTILISATEURS
-  // ==========================================
+  // CRÉATION DES UTILISATEURS
   const hashedPassword = await bcrypt.hash("password123", 10);
 
   const userMarouane = await prisma.user.upsert({
@@ -93,11 +88,7 @@ async function main() {
     },
   });
 
-  // ==========================================
-  // 3. CRÉATION DES ARTICLES (Avec nettoyage préalable)
-  // ==========================================
-
-  // 👇 On supprime d'abord les anciens articles de ces utilisateurs pour éviter les doublons
+  // CRÉATION DES ARTICLES (Avec nettoyage préalable)
   await prisma.article.deleteMany({
     where: {
       authorId: {
@@ -130,11 +121,7 @@ async function main() {
     },
   });
 
-  // ==========================================
-  // 4. CRÉATION DES COMMENTAIRES (Avec nettoyage préalable)
-  // ==========================================
-
-  // 👇 On supprime d'abord les anciens commentaires de ces utilisateurs
+  // CRÉATION DES COMMENTAIRES (Avec nettoyage préalable)
   await prisma.comment.deleteMany({
     where: {
       authorId: {
@@ -160,10 +147,7 @@ async function main() {
     },
   });
 
-  // ==========================================
-  // 5. CRÉATION DES ABONNEMENTS (Dépendent des Users et Topics)
-  // ==========================================
-
+  // CRÉATION DES ABONNEMENTS (Dépendent des Users et Topics)
   await prisma.subscription.deleteMany({
     where: {
       userId: {

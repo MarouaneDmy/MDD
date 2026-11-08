@@ -55,7 +55,7 @@ describe("Test Unitaire : Schéma de validation Inscription", () => {
   it("devrait rejeter un username trop court (min 3 caractères)", () => {
     const invalidData = {
       email: "test@mdd.dev",
-      username: "ab", // Trop court
+      username: "ab",
       password: "password123",
     };
 
@@ -67,7 +67,7 @@ describe("Test Unitaire : Schéma de validation Inscription", () => {
     const invalidData = {
       email: "test@mdd.dev",
       username: "dev_test",
-      password: "123", // Trop court
+      password: "123",
     };
 
     const result = registerSchema.safeParse(invalidData);

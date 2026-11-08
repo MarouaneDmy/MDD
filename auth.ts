@@ -16,24 +16,20 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         password: { label: "Mot de passe", type: "password" },
       },
       async authorize(credentials) {
-        // 1. Validation des données entrantes
         const parsedCredentials = loginSchema.safeParse(credentials);
         if (!parsedCredentials.success) return null;
 
         const { email, password } = parsedCredentials.data;
 
-        // 2. Vérification en base de données (Prisma)
         const user = await prisma.user.findUnique({
           where: { email },
         });
 
-        if (!user) return null; // Utilisateur non trouvé
+        if (!user) return null;
 
-        // 3. Vérification du mot de passe (bcrypt)
         const isPasswordValid = await bcrypt.compare(password, user.password);
-        if (!isPasswordValid) return null; // Mot de passe incorrect
+        if (!isPasswordValid) return null;
 
-        // 4. Retourner l'utilisateur (sans le mot de passe !)
         return {
           id: user.id,
           email: user.email,
@@ -43,7 +39,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   pages: {
-    signIn: "/login", // Rediriger vers notre page de login personnalisée
+    signIn: "/login",
   },
   callbacks: {
     async jwt({ token, user }) {

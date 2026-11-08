@@ -9,7 +9,6 @@ describe("Test d'Intégration : Création d'Article", () => {
   let testTopicId: string;
 
   beforeAll(async () => {
-    // Créer un utilisateur de test
     const hashedPassword = await bcrypt.hash("password123", 10);
     const user = await prisma.user.create({
       data: {
@@ -20,7 +19,6 @@ describe("Test d'Intégration : Création d'Article", () => {
     });
     testUserId = user.id;
 
-    // Récupérer un thème existant
     const topic = await prisma.topic.findFirst();
     if (topic) {
       testTopicId = topic.id;
@@ -28,7 +26,6 @@ describe("Test d'Intégration : Création d'Article", () => {
   });
 
   afterAll(async () => {
-    // Nettoyage
     await prisma.article.deleteMany({ where: { authorId: testUserId } });
     await prisma.user.delete({ where: { id: testUserId } });
     await prisma.$disconnect();

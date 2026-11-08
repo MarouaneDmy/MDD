@@ -12,7 +12,7 @@ test.describe("Profil Utilisateur", () => {
   test("devrait permettre de modifier son nom d'utilisateur", async ({
     page,
   }) => {
-    await page.getByRole("link", { name: /profil/i }).click(); // Match "Mon profil" ou l'icône
+    await page.getByRole("link", { name: /profil/i }).click();
     await page.waitForURL("/profile");
 
     const usernameInput = page.getByLabel("Username");

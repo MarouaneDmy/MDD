@@ -1,4 +1,3 @@
-// app/(dashboard)/articles/new/page.tsx
 import { getAllTopics } from "@/app/actions/article.actions";
 import CreateArticleForm from "@/app/components/articles/CreateArticleForm";
 

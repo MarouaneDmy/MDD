@@ -1,4 +1,3 @@
-// app/components/profile/ProfileForm.tsx
 "use client";
 
 import { useState } from "react";
@@ -25,7 +24,6 @@ export default function ProfileForm({
     setSuccess(false);
     setIsLoading(true);
 
-    // e.currentTarget vaut null après un await : on garde la référence
     const form = e.currentTarget;
     const result = await updateProfile(new FormData(form));
 

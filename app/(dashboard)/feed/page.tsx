@@ -15,7 +15,6 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
   const resolvedSearchParams = await searchParams;
   const sortParam = resolvedSearchParams.sort;
 
-  // On détermine l'ordre pour Prisma
   const orderByDirection = sortParam === "oldest" ? "asc" : "desc";
 
   const articles = await prisma.article.findMany({

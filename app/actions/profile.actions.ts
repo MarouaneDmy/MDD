@@ -1,4 +1,3 @@
-// app/actions/profile.actions.ts
 "use server";
 
 import { auth } from "@/auth";
@@ -20,7 +19,6 @@ export async function updateProfile(formData: FormData) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
-  // Validation avec Zod
   const validatedData = profileSchema.safeParse({ username, email, password });
 
   if (!validatedData.success) {
@@ -40,7 +38,6 @@ export async function updateProfile(formData: FormData) {
       email: validatedData.data.email,
     };
 
-    // Hacher le mot de passe seulement s'il est fourni
     if (validatedData.data.password && validatedData.data.password.length > 0) {
       updateData.password = await bcrypt.hash(validatedData.data.password, 10);
     }
@@ -54,7 +51,6 @@ export async function updateProfile(formData: FormData) {
 
     return { success: true };
   } catch (error) {
-    // Gérer l'erreur de contrainte unique (email déjà utilisé)
     if (
       error instanceof Error &&
       "code" in error &&
