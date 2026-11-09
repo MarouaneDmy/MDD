@@ -71,13 +71,11 @@ beforeAll(async () => {
   });
   otherUserId = otherUser.id;
 
-  // Créés dans l'ordre inverse pour vérifier le tri par nom
   const topicZ = await prisma.topic.create({ data: { name: TOPIC_Z_NAME } });
   const topicA = await prisma.topic.create({ data: { name: TOPIC_A_NAME } });
   topicZId = topicZ.id;
   topicAId = topicA.id;
 
-  // Un autre utilisateur est déjà abonné au thème A : sert à tester le compteur
   await prisma.subscription.create({
     data: { userId: otherUserId, topicId: topicAId },
   });
@@ -92,7 +90,6 @@ beforeEach(async () => {
   vi.clearAllMocks();
   mockedAuth.mockResolvedValue({ user: { id: userId } });
 
-  // Chaque test repart sans abonnement pour l'utilisateur principal
   await prisma.subscription.deleteMany({ where: { userId } });
 });
 
@@ -149,7 +146,7 @@ describe("toggleSubscription", () => {
 
   it("ne devrait pas toucher aux abonnements des autres utilisateurs", async () => {
     await toggleSubscription(topicAId);
-    await toggleSubscription(topicAId); // se désabonne
+    await toggleSubscription(topicAId);
 
     const otherCount = await prisma.subscription.count({
       where: { userId: otherUserId, topicId: topicAId },
@@ -158,7 +155,6 @@ describe("toggleSubscription", () => {
   });
 
   it("devrait renvoyer une erreur générique si le thème n'existe pas", async () => {
-    // Un thème inexistant viole la clé étrangère à la création de l'abonnement
     const result = await toggleSubscription("theme-inexistant");
 
     expect(result).toEqual({
@@ -202,13 +198,11 @@ describe("getAllTopicsWithSubscriptionStatus", () => {
 
     const { a, z } = await findOurTopics();
 
-    // Thème A : l'utilisateur principal + l'autre utilisateur
     expect(a._count.subscribers).toBe(2);
     expect(z._count.subscribers).toBe(0);
   });
 
   it("ne devrait pas considérer comme abonné un thème suivi uniquement par un autre", async () => {
-    // L'autre utilisateur suit le thème A, pas l'utilisateur principal
     const { a } = await findOurTopics();
 
     expect(a.isSubscribed).toBe(false);

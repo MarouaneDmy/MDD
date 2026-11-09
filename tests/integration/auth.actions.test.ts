@@ -50,7 +50,6 @@ afterAll(async () => {
 });
 
 beforeEach(() => {
-  // L'action logge beaucoup : on garde la sortie des tests lisible
   vi.spyOn(console, "log").mockImplementation(() => {});
   vi.spyOn(console, "error").mockImplementation(() => {});
 });

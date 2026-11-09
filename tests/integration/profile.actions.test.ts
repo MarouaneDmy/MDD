@@ -74,7 +74,6 @@ beforeAll(async () => {
   });
   userId = user.id;
 
-  // Un second compte, pour provoquer un conflit d'e-mail
   await prisma.user.create({
     data: {
       email: OTHER_EMAIL,
@@ -96,7 +95,6 @@ beforeEach(async () => {
   vi.clearAllMocks();
   mockedAuth.mockResolvedValue({ user: { id: userId } });
 
-  // Chaque test repart du même état : le compte de test est remis à zéro
   await prisma.user.update({
     where: { id: userId },
     data: { ...USER, password: initialHash },

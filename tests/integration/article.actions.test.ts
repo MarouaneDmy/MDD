@@ -49,7 +49,6 @@ function buildFormData(
 }
 
 async function cleanup() {
-  // Les articles d'abord : ils dépendent de l'utilisateur et des thèmes
   await prisma.article.deleteMany({ where: { author: { email: USER_EMAIL } } });
   await prisma.user.deleteMany({ where: { email: USER_EMAIL } });
   await prisma.topic.deleteMany({
@@ -69,7 +68,6 @@ beforeAll(async () => {
   });
   userId = user.id;
 
-  // Créés dans l'ordre inverse pour vérifier le tri de getAllTopics
   const topicZ = await prisma.topic.create({ data: { name: TOPIC_Z_NAME } });
   const topicA = await prisma.topic.create({ data: { name: TOPIC_A_NAME } });
   topicZId = topicZ.id;
@@ -143,7 +141,6 @@ describe("createArticle : succès", () => {
 
 describe("createArticle : erreur inattendue", () => {
   it("devrait renvoyer une erreur générique si la base refuse l'écriture", async () => {
-    // Un auteur inexistant viole la clé étrangère : Prisma lève une erreur
     mockedAuth.mockResolvedValue({ user: { id: "utilisateur-inexistant" } });
 
     const result = await createArticle(buildFormData());
