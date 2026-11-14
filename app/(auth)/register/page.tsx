@@ -5,12 +5,17 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/app/components/ui/Input";
 import AuthHeading from "@/app/components/ui/AuthHeading";
 import { Button } from "@/app/components/ui/Button";
+import PasswordRequirements from "@/app/components/ui/PasswordRequirements";
 import { registerUser } from "@/app/actions/auth.actions";
+import { PASSWORD_RULES } from "@/lib/validations/password-rules";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  const isPasswordValid = PASSWORD_RULES.every((rule) => rule.test(password));
 
   async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -53,15 +58,19 @@ export default function RegisterPage() {
             required
           />
 
-          <Input
-            id="password"
-            name="password"
-            type="password"
-            label="Mot de passe"
-            autoComplete="new-password"
-            minLength={8}
-            required
-          />
+          <div className="space-y-2">
+            <Input
+              id="password"
+              name="password"
+              type="password"
+              label="Mot de passe"
+              autoComplete="new-password"
+              aria-describedby="password-rules"
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <PasswordRequirements id="password-rules" value={password} />
+          </div>
 
           {error && (
             <div className="rounded border border-red-200 bg-red-50 p-3 text-sm text-red-500">
@@ -70,7 +79,11 @@ export default function RegisterPage() {
           )}
 
           <div className="flex justify-center pt-2">
-            <Button type="submit" disabled={isLoading} className="w-36">
+            <Button
+              type="submit"
+              disabled={isLoading || !isPasswordValid}
+              className="w-36"
+            >
               {isLoading ? "..." : "S'inscrire"}
             </Button>
           </div>

@@ -64,7 +64,7 @@ async function main() {
   });
 
   // CRÉATION DES UTILISATEURS
-  const hashedPassword = await bcrypt.hash("password123", 10);
+  const hashedPassword = await bcrypt.hash("Password123!", 10);
 
   const userMarouane = await prisma.user.upsert({
     where: { email: "marouane@mdd.dev" },
@@ -100,8 +100,13 @@ async function main() {
   const article1 = await prisma.article.create({
     data: {
       title: "Pourquoi TypeScript est incontournable en 2024",
-      content:
-        "TypeScript ajoute un typage statique à JavaScript, ce qui réduit les bugs et améliore la maintenabilité...",
+      content: `Depuis ses débuts, JavaScript a dominé le développement web grâce à sa flexibilité. Cependant, cette liberté a souvent été synonyme de bugs difficiles à traquer, surtout lorsque la taille d'un projet augmente. C'est ici que TypeScript entre en jeu.
+
+TypeScript, développé par Microsoft, ajoute un typage statique optionnel à JavaScript. Cela permet de détecter les erreurs dès la phase de compilation, bien avant que le code n'atteigne le navigateur. Fini les "undefined is not a function" qui apparaissent uniquement en production !
+
+Au-delà de la sécurité, TypeScript offre une expérience développeur (DX) inégalée. L'autocomplétion dans votre IDE devient incroyablement précise, et le refactoring de grosses bases de code se fait en toute confiance. 
+
+Aujourd'hui, en 2024, TypeScript n'est plus une simple option. Il est devenu le standard de l'industrie, adopté par les plus grands frameworks comme React, Angular, Vue, et même Node.js. Ne pas l'utiliser, c'est se priver de l'outil le plus puissant pour maintenir un code propre et évolutif.`,
       authorId: userMarouane.id,
       topics: {
         create: [{ topicId: topicJS.id }, { topicId: topicTS.id }],
@@ -112,8 +117,13 @@ async function main() {
   const article2 = await prisma.article.create({
     data: {
       title: "Les bases du Web3 pour les développeurs Front-end",
-      content:
-        "Le Web3 change la façon dont nous pensons les applications décentralisées. Voici un guide pour débuter...",
+      content: `Le Web3 représente un changement de paradigme majeur sur Internet. Contrairement au Web2, où les données sont contrôlées par des géants centralisés (GAFAM), le Web3 repose sur la décentralisation, la blockchain et la propriété des données par les utilisateurs.
+
+Mais quel est le rôle d'un développeur Front-end dans tout ça ? En réalité, il est central. Le Front-end est le pont entre l'utilisateur et la blockchain. Votre mission sera de connecter le navigateur à des portefeuilles numériques (comme MetaMask) et d'interagir avec des "Smart Contracts" déployés sur la blockchain.
+
+Pour ce faire, vous utiliserez des bibliothèques comme ethers.js, viem ou wagmi. Elles vous permettent de lire des données sur la blockchain (comme le solde d'un token) ou d'écrire des données (comme effectuer une transaction). 
+
+Cependant, le Web3 apporte son lot de défis UX : les transactions ne sont pas instantanées, elles coûtent de l'argent (le "gas"), et l'utilisateur doit valider chaque action dans son wallet. Concevoir une interface fluide qui masque cette complexité est le véritable défi du développeur Front-end Web3 aujourd'hui.`,
       authorId: userJuana.id,
       topics: {
         create: [{ topicId: topicWeb3.id }],

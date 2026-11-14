@@ -3,7 +3,7 @@ import type { Page } from "@playwright/test";
 export async function login(
   page: Page,
   identifier = "marouane@mdd.dev",
-  password = "password123",
+  password = "Password123!",
 ) {
   await page.goto("/login");
   await page.getByLabel(/e-mail/i).fill(identifier);

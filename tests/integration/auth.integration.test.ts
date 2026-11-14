@@ -22,7 +22,7 @@ describe("Test d'Intégration : Chaîne d'Authentification", () => {
     expect(user?.email).toBe("marouane@mdd.dev");
     expect(user?.username).toBe("marouane_dev");
 
-    const plainTextPassword = "password123";
+    const plainTextPassword = "Password123!";
     const isPasswordValid = await bcrypt.compare(
       plainTextPassword,
       user!.password,
@@ -50,7 +50,7 @@ describe("Test d'Intégration : Inscription et Contraintes DB", () => {
   });
 
   it("devrait créer un nouvel utilisateur et hacher son mot de passe", async () => {
-    const hashedPassword = await bcrypt.hash("password123", 10);
+    const hashedPassword = await bcrypt.hash("Password123!", 10);
 
     const newUser = await prisma.user.create({
       data: {
@@ -62,11 +62,11 @@ describe("Test d'Intégration : Inscription et Contraintes DB", () => {
 
     expect(newUser.id).toBeDefined();
     expect(newUser.email).toBe("tdd_test@mdd.dev");
-    expect(newUser.password).not.toBe("password123");
+    expect(newUser.password).not.toBe("Password123!");
   });
 
   it("devrait échouer si l'email existe déjà (Unique Constraint)", async () => {
-    const hashedPassword = await bcrypt.hash("password123", 10);
+    const hashedPassword = await bcrypt.hash("Password123!", 10);
 
     await expect(
       prisma.user.create({

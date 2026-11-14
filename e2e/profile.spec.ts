@@ -7,7 +7,7 @@ test.describe("Profil Utilisateur", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/login");
     await page.getByLabel(/e-mail/i).fill("marouane@mdd.dev");
-    await page.getByLabel("Mot de passe").fill("password123");
+    await page.getByLabel("Mot de passe").fill("Password123!");
     await page.getByRole("button", { name: "Se connecter" }).click();
     await page.waitForURL("/feed");
   });

@@ -23,7 +23,7 @@ describe("Test d'Intégration : Actions Profil", () => {
   let testTopicId: string;
 
   beforeAll(async () => {
-    const hashedPassword = await bcrypt.hash("password123", 10);
+    const hashedPassword = await bcrypt.hash("Password123!", 10);
     const user = await prisma.user.create({
       data: {
         email: "test_profile@mdd.dev",

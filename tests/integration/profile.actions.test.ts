@@ -28,7 +28,7 @@ const PREFIX = "action_profile";
 const USER = {
   email: `${PREFIX}@mdd.dev`,
   username: `${PREFIX}_user`,
-  password: "password123",
+  password: "Password123!",
 };
 const OTHER_EMAIL = `${PREFIX}_other@mdd.dev`;
 const TOPIC_NAME = "TestActionsProfile Topic";
@@ -147,15 +147,15 @@ describe("updateProfile", () => {
 
   it("devrait changer le mot de passe et le hacher", async () => {
     const result = await updateProfile(
-      buildFormData({ password: "nouveau_mdp_123" }),
+      buildFormData({ password: "Nouveau_mdp_123" }),
     );
 
     expect(result).toEqual({ success: true });
 
     const user = await prisma.user.findUnique({ where: { id: userId } });
-    expect(user!.password).not.toBe("nouveau_mdp_123");
+    expect(user!.password).not.toBe("Nouveau_mdp_123");
     expect(user!.password).not.toBe(initialHash);
-    expect(await bcrypt.compare("nouveau_mdp_123", user!.password)).toBe(true);
+    expect(await bcrypt.compare("Nouveau_mdp_123", user!.password)).toBe(true);
   });
 
   it("devrait refuser un e-mail déjà utilisé par un autre compte", async () => {

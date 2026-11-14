@@ -14,7 +14,7 @@ import { registerUser } from "@/app/actions/auth.actions";
 
 const prisma = new PrismaClient();
 
-const PASSWORD = "password123";
+const PASSWORD = "Password123!";
 const EMAIL_PREFIX = "action_register";
 
 function buildFormData(

@@ -6,7 +6,7 @@ describe("Test Unitaire : Schéma de validation Login", () => {
   it("devrait valider des identifiants corrects", () => {
     const validData = {
       email: "marouane@mdd.dev",
-      password: "password123",
+      password: "Password123!",
     };
 
     const result = loginSchema.safeParse(validData);
@@ -16,7 +16,7 @@ describe("Test Unitaire : Schéma de validation Login", () => {
   it("devrait rejeter un email invalide", () => {
     const invalidData = {
       email: "pas-un-email",
-      password: "password123",
+      password: "Password123!",
     };
 
     const result = loginSchema.safeParse(invalidData);
@@ -56,7 +56,7 @@ describe("Test Unitaire : Schéma de validation Inscription", () => {
     const invalidData = {
       email: "test@mdd.dev",
       username: "ab",
-      password: "password123",
+      password: "Password123!",
     };
 
     const result = registerSchema.safeParse(invalidData);

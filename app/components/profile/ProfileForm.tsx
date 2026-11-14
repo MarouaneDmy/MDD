@@ -4,6 +4,8 @@ import { useState } from "react";
 import { updateProfile } from "@/app/actions/profile.actions";
 import TextField from "@/app/components/ui/TextField";
 import { Button } from "@/app/components/ui/Button";
+import { PASSWORD_RULES } from "@/lib/validations/password-rules";
+import PasswordRequirements from "../ui/PasswordRequirements";
 
 interface ProfileFormProps {
   username: string;
@@ -18,6 +20,10 @@ export default function ProfileForm({
   const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  const [password, setPassword] = useState("");
+  const isPasswordValid =
+    password === "" || PASSWORD_RULES.every((rule) => rule.test(password));
+
   async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
@@ -29,6 +35,7 @@ export default function ProfileForm({
 
     if (result.success) {
       setSuccess(true);
+      setPassword("");
       const passwordInput = form.elements.namedItem(
         "password",
       ) as HTMLInputElement | null;
@@ -73,8 +80,10 @@ export default function ProfileForm({
         type="password"
         placeholder="Mot de passe"
         autoComplete="new-password"
+        onChange={(e) => setPassword(e.target.value)}
         minLength={8}
       />
+      {password && <PasswordRequirements value={password} />}
 
       {error && (
         <div className="rounded border border-red-200 bg-red-50 p-3 text-sm text-red-600">
@@ -89,7 +98,11 @@ export default function ProfileForm({
       )}
 
       <div className="flex justify-center pt-3">
-        <Button type="submit" disabled={isLoading} className="w-32">
+        <Button
+          type="submit"
+          disabled={isLoading || !isPasswordValid}
+          className="w-32"
+        >
           {isLoading ? "Sauvegarde..." : "Sauvegarder"}
         </Button>
       </div>

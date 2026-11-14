@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { optionalPasswordSchema } from "./password.schema";
 
 export const loginSchema = z.object({
   email: z.string().email("Adresse email invalide"),
@@ -10,9 +11,7 @@ export const registerSchema = z.object({
   username: z
     .string()
     .min(3, "Le nom d'utilisateur doit contenir au moins 3 caractères"),
-  password: z
-    .string()
-    .min(8, "Le mot de passe doit contenir au moins 8 caractères"),
+  password: optionalPasswordSchema,
 });
 
 export type LoginInput = z.infer<typeof loginSchema>;

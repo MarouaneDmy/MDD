@@ -21,7 +21,7 @@ test.describe("Authentification", () => {
   }) => {
     await page.goto("/login");
     await page.getByLabel(/e-mail/i).fill("marouane@mdd.dev");
-    await page.getByLabel("Mot de passe").fill("password123");
+    await page.getByLabel("Mot de passe").fill("Password123!");
 
     const responsePromise = page.waitForResponse((response) =>
       response.url().includes("/api/auth/callback/credentials"),
